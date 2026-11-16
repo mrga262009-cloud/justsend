@@ -70,7 +70,7 @@ jobs:
         run: cargo test --manifest-path RustCore/Cargo.toml -p justsend-core
 
       - name: Generate Xcode project
-        run: xcodegen generate --spec project.yml --project JustSend.xcodeproj
+        run: xcodegen generate --spec project.yml
 
       - name: Build (unsigned)
         run: |

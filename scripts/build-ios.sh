@@ -38,7 +38,7 @@ echo "==> [5/5] Generate Xcode project & build unsigned IPA"
 if ! command -v xcodegen >/dev/null 2>&1; then
   brew install xcodegen
 fi
-xcodegen generate --spec project.yml --project JustSend.xcodeproj
+xcodegen generate --spec project.yml
 
 DERIVED="$ROOT/build"
 rm -rf "$DERIVED"

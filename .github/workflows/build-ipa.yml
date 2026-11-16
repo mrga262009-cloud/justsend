@@ -38,9 +38,6 @@ jobs:
         with:
           workspaces: RustCore -> RustCore/target
 
-      - name: Cache Homebrew
-        uses: Homebrew/actions/cache-homebrew-prefixes@master
-
       - name: Build Rust core (device)
         run: |
           CARGO_BUILD_JOBS=2 cargo build --release \

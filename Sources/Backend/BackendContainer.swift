@@ -36,9 +36,9 @@ final class BackendContainer: ObservableObject {
 
     static let sampleMoments: [Moment] = [
         Moment(canonicalUID: "m1", ownerUID: "f1", date: Date().addingTimeInterval(-3600),
-               thumbnailURL: nil, caption: "Golden hour ✨", noteType: "standard", viewCount: 4,
-               reactions: [Reaction(id: "r1", uid: "f2", emoji: "❤️", createdAt: Date())]),
+               kind: .image, thumbnailURL: nil, caption: "Golden hour ✨", noteType: "standard",
+               reactions: [Reaction(id: "r1", uid: "f2", emoji: "❤️", createdAt: Date())], viewCount: 4),
         Moment(canonicalUID: "m2", ownerUID: "f3", date: Date().addingTimeInterval(-7200),
-               caption: "Weekend vibes", noteType: "standard", kind: .video, durationSeconds: 28, viewCount: 9),
+               kind: .video, caption: "Weekend vibes", noteType: "standard", durationSeconds: 28, viewCount: 9),
     ]
 }

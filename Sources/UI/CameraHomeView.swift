@@ -100,7 +100,9 @@ struct CameraHomeView: View {
         }
         .sheet(isPresented: $showFilterSheet) { FilterStoreView() }
         .sheet(isPresented: $showPhotobooth) { PhotoboothView(camera: camera) }
-        .sheet(item: $captured) { img in MomentsComposer(image: img) }
+        .sheet(isPresented: Binding(get: { captured != nil }, set: { if !$0 { captured = nil } })) {
+            if let captured { MomentsComposer(image: captured) }
+        }
         .task { camera.isPlus = backend.isPlus; await camera.configure() }
         .onDisappear { camera.stop() }
     }

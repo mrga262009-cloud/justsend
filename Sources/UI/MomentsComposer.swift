@@ -32,7 +32,7 @@ struct MomentsComposer: View {
                     }
                     VStack(alignment: .leading) {
                         Text("Send to").font(.headline).padding(.horizontal)
-                        ForEach(BackendContainer.previewFriends) { f in
+                        ForEach(BackendContainer.sampleFriends) { f in
                             HStack {
                                 Avatar(url: f.user?.avatarURL, name: f.user?.displayName ?? "?").frame(width: 36, height: 36)
                                 Text(f.user?.displayName ?? "?")

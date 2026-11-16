@@ -39,10 +39,10 @@ struct MomentCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Avatar(url: nil, name: BackendContainer.previewFriends.first(where: { $0.uid == moment.ownerUID })?.user?.firstName ?? "?")
+                Avatar(url: nil, name: BackendContainer.sampleFriends.first(where: { $0.uid == moment.ownerUID })?.user?.firstName ?? "?")
                     .frame(width: 38, height: 38)
                 VStack(alignment: .leading) {
-                    Text(BackendContainer.previewFriends.first(where: { $0.uid == moment.ownerUID })?.user?.displayName ?? "Friend")
+                    Text(BackendContainer.sampleFriends.first(where: { $0.uid == moment.ownerUID })?.user?.displayName ?? "Friend")
                         .font(.subheadline.weight(.semibold))
                     Text(moment.date, style: .relative).font(.caption).foregroundStyle(Theme.muted)
                 }

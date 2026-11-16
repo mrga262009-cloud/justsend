@@ -1,0 +1,118 @@
+version: 1
+target:
+  name: locket-private-api
+  kind: mobile
+  description: "Locket iOS private API surface reconstructed from IPA static analysis and public research. For interoperability research only."
+  servers:
+    - { id: api, url: https://api.locketcamera.com }
+    - { id: identity, url: https://www.googleapis.com/identitytoolkit/v3/relyingparty }
+    - { id: token, url: https://securetoken.googleapis.com/v1 }
+    - { id: firestore, url: https://firestore.googleapis.com/v1/projects/locket-4252a/databases/(default)/documents }
+    - { id: chat, url: wss://api.locketcamera.com, transport: websocket }
+  auth:
+    firebaseIdToken: { type: bearer, token_env: LOCKET_ID_TOKEN, apply: { in: header, name: Authorization, prefix: "Bearer " } }
+    firebaseApiKey: { type: api_key, token_env: LOCKET_FIREBASE_API_KEY, apply: { in: query, name: key } }
+    appCheck: { type: header, token_env: LOCKET_APP_CHECK, apply: { in: header, name: X-Firebase-AppCheck }, notes: "Device attestation; do not forge." }
+  limits: { rps: 1, burst: 2 }
+
+x-authorization: "Own account / authorized research only. No credential minting, no entitlement bypass."
+x-confidence-note: "All endpoints inferred from static analysis; no live replay performed in this deliverable."
+
+endpoints:
+  - id: sign_in_email
+    server: identity
+    method: POST
+    path: /verifyPassword
+    auth: firebaseApiKey
+    confidence: inferred
+    request_body: { email: string, password: string, returnSecureToken: true }
+    notes: "Returns idToken + refreshToken; ~1h TTL."
+
+  - id: sign_in_phone
+    server: api
+    method: POST
+    path: /signInWithPhonePassword
+    confidence: inferred
+    request_body: { data: { phone: string, password: string } }
+
+  - id: refresh_token
+    server: token
+    method: POST
+    path: /token
+    auth: firebaseApiKey
+    confidence: inferred
+    request_body: { grant_type: refresh_token, refresh_token: string }
+
+  - id: get_latest_moments
+    server: api
+    method: POST
+    path: /getLatestMomentV2
+    auth: firebaseIdToken
+    confidence: inferred
+    request_body:
+      data:
+        excluded_users: [string]
+        sync_token: string
+        last_fetch: { "@type": "type.googleapis.com/google.protobuf.Int64Value", value: string }
+        should_count_missed_moments: true
+    pagination:
+      type: cursor
+      param: sync_token
+      items_path: result.data
+      next_path: result.sync_token
+      stop: { empty_pages: 1, max_pages: 100 }
+    invariants:
+      - "result is an object"
+      - "result.status is 200 or 304"
+      - "result.data is an array when status is 200"
+
+  - id: react_to_moment
+    server: api
+    method: POST
+    path: /reactToMoment
+    auth: firebaseIdToken
+    confidence: inferred
+    request_body: { data: { moment_uid: string, reaction: string } }
+    notes: "Body-level errors: check result.status, not HTTP status."
+
+  - id: fetch_user
+    server: api
+    method: POST
+    path: /fetchUserV2
+    auth: firebaseIdToken
+    confidence: inferred
+    request_body: { data: { user_uid: string } }
+
+  - id: get_moment_views
+    server: api
+    method: POST
+    path: /getMomentViews
+    auth: firebaseIdToken
+    confidence: inferred
+    notes: "Paid entitlement required upstream. JustSend implements its own equivalent; no bypass."
+
+  - id: send_chat_message
+    server: api
+    method: POST
+    path: /sendChatMessageV2
+    auth: firebaseIdToken
+    confidence: inferred
+    request_body:
+      data: { receiver_uid: string, client_token: string, msg: string, moment_uid: null, from_memory: false }
+
+  - id: list_friends
+    server: firestore
+    method: GET
+    path: /users/{uid}/friends
+    auth: firebaseIdToken
+    confidence: inferred
+    invariants: ["response.documents is an array"]
+
+  - id: chat_stream
+    server: chat
+    method: GET
+    path: /wss_v2/chat
+    transport: websocket
+    auth: firebaseIdToken
+    confidence: inferred
+    notes: "Heartbeat ~30s (LocketConfig.plist)."

@@ -1,0 +1,8 @@
+RustCore/target/
+build/
+build-sim/
+out/
+JustSend.xcodeproj/
+*.xcuserdatad/
+.DS_Store
+crawler.checkpoint

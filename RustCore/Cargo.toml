@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = [
+  "justsend-core",
+  "justsend-ffi",
+  "justsend-crawler",
+]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+authors = ["JustSend"]
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
+codegen-units = 1
+panic = "abort"

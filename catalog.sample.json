@@ -1,0 +1,31 @@
+[
+  {
+    "id": "tt-1108584",
+    "name": "Soft Glow Beauty",
+    "source": "tiktok",
+    "author": "creator_you_own",
+    "thumbnail": null,
+    "lut": null,
+    "passes": [
+      { "pass_type": "beautify", "intensity": 0.55, "parameters": {} },
+      { "pass_type": "whiten", "intensity": 0.35, "parameters": {} },
+      { "pass_type": "lut", "intensity": 1.0, "parameters": {} }
+    ],
+    "tags": ["tiktok", "beauty"],
+    "effect_url": null,
+    "source_effect_id": "1108584"
+  },
+  {
+    "id": "tt-1109028",
+    "name": "Film Dust",
+    "source": "tiktok",
+    "author": "creator_you_own",
+    "passes": [
+      { "pass_type": "lut", "intensity": 1.0, "parameters": {} },
+      { "pass_type": "grain", "intensity": 0.25, "parameters": {} },
+      { "pass_type": "vignette", "intensity": 0.4, "parameters": {} }
+    ],
+    "tags": ["tiktok", "film"],
+    "source_effect_id": "1109028"
+  }
+]

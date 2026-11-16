@@ -1,0 +1,61 @@
+version: 1
+target:
+  name: tiktok-effects
+  kind: mobile
+  description: "TikTok effect metadata surface for the JustSend filter ingester."
+  servers:
+    - { id: api, url: https://api.tiktokv.com }
+    - { id: inapp, url: https://inapp.tiktokv.com }
+    - { id: effecthouse, url: https://effecthouse.tiktok.com }
+    - { id: socialcrawl, url: https://www.socialcrawl.dev }
+    - { id: cdn, url: https://lf16-effectcdn-sg.tiktokcdn.com }
+  auth:
+    socialcrawlKey: { type: api_key, token_env: SOCIALCRAWL_API_KEY, apply: { in: header, name: x-api-key } }
+  limits: { rps: 1, burst: 1 }
+
+x-authorization: "Effects you own or are authorized to test. Metadata only; no effect binaries redistributed."
+x-confidence-note: "Private endpoints inferred from IPA strings; third-party endpoint verified from public docs."
+
+endpoints:
+  - id: search_effect
+    server: api
+    method: POST
+    path: /aweme/v1/search/effect/
+    confidence: inferred
+    notes: "Requires private API signing + device fingerprint on real device."
+
+  - id: original_effect_list
+    server: api
+    method: POST
+    path: /aweme/v1/original/effect/list/
+    confidence: inferred
+    notes: "Creator's own effects — the legal source for 'my effects'."
+
+  - id: effect_detail
+    server: api
+    method: POST
+    path: /aweme/v1/sticker/detail/
+    confidence: inferred
+
+  - id: effect_meta
+    server: effecthouse
+    method: GET
+    path: /api/app/effect_meta
+    confidence: inferred
+
+  - id: effects_by_id
+    server: socialcrawl
+    method: GET
+    path: /v1/tiktok/effects
+    auth: socialcrawlKey
+    confidence: observed
+    pagination:
+      type: batch_ids
+      param: ids
+      batch_size: 50
+      stop: { on_status: [401, 403, 429], empty_pages: 1 }
+    invariants:
+      - "match rows by returned id, not by position"
+      - "unknown ids are omitted and repeated ids collapse"
+      - "429 -> stop and resume from checkpoint"
+    notes: "1 credit/call; 100 free credits on signup."

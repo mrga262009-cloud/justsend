@@ -41,10 +41,14 @@ targets:
           - LaunchScreen.storyboard
           - Libraries
       - path: Sources
-    resources:
-      - path: Sources/Resources
+        excludes:
+          - Resources
       - path: App/Assets.xcassets
+        buildPhase: resources
       - path: App/LaunchScreen.storyboard
+        buildPhase: resources
+      - path: Sources/Resources
+        buildPhase: resources
     info:
       path: App/Info.plist
       properties:

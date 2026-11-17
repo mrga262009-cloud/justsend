@@ -86,6 +86,14 @@ jobs:
           cp -R build/Build/Products/Release-iphoneos/JustSend.app out/Payload/
           cd out && zip -qry JustSend-unsigned.ipa Payload
 
+      - name: Verify IPA contents
+        run: |
+          unzip -l out/JustSend-unsigned.ipa > /tmp/ipa-content.txt
+          grep -q 'Payload/JustSend.app/JustSend' /tmp/ipa-content.txt
+          grep -q 'Payload/JustSend.app/Assets.car' /tmp/ipa-content.txt
+          grep -q 'Payload/JustSend.app/LaunchScreen.storyboardc' /tmp/ipa-content.txt
+          echo "IPA structure verified"
+
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
